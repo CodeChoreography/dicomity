@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dicomity"
+dynamic = ["version"]
+description = 'Utility for grouping DICOM files'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Tom Doel", email = "tom.doel@codechoreography.co.uk" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "pydicom",
+  "numpy",
+]
+
+[project.urls]
+Documentation = "https://github.com/CodeChoreography/dicomity#readme"
+Issues = "https://github.com/CodeChoreography/dicomity/issues"
+Source = "https://github.com/CodeChoreography/dicomity"
+
+[tool.hatch.version]
+source = "vcs"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src",
+]
