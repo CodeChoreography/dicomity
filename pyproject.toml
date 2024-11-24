@@ -30,6 +30,7 @@ dependencies = [
   "tqdm",
   "natsort",
   "dataclasses_json",
+  "appdirs",
 ]
 
 [project.urls]
