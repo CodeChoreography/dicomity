@@ -7,6 +7,7 @@ from natsort import natsorted
 from appdirs import user_config_dir
 
 from dicomity.types import GroupingMetadata, PatientName
+from pyreporting.core import APP_NAME, APP_AUTHOR
 
 
 def compare_inexact(
@@ -221,4 +222,4 @@ def current_date_string():
 
 def get_user_directory():
     """Returns path to the user's home folder"""
-    return user_config_dir(CoreDiskUtils.APP_NAME, CoreDiskUtils.APP_AUTHOR)
+    return user_config_dir(APP_NAME, APP_AUTHOR)
