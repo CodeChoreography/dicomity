@@ -74,12 +74,12 @@ def load_main_image_from_dicom_files(image_path, filenames, reporting=None):
     representative_metadata = main_group.metadata[0]
 
     # Load the pixel data
-    image_wrapper = load_images_from_stack(
+    image_volume = load_images_from_stack(
         stack=main_group,
         reporting=reporting
     )
 
-    return image_wrapper, representative_metadata, slice_thickness, \
+    return image_volume, representative_metadata, slice_thickness, \
         global_origin_mm, sorted_positions
 
 
@@ -157,7 +157,7 @@ def load_metadata_from_dicom_files(image_path, filenames,
     return dicom_grouper
 
 
-def load_images_from_stack(stack: DicomStack, reporting=None) -> CoreWrapper:
+def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
     """Load metadata from a series of DICOM files
 
     Args:
@@ -204,18 +204,18 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> CoreWrapper:
         data_type = 'int8'
     image_size = [size_i, size_j, size_k, samples_per_pixel] if \
         samples_per_pixel > 1 else [size_i, size_j, size_k]
-    image_wrapper.raw_image = np.zeros(image_size, data_type)
+    raw_image = np.zeros(image_size, data_type)
     if samples_per_pixel > 1:
-        image_wrapper.raw_image[:, :, 0, :] = first_image_slice
+        raw_image[:, :, 0, :] = first_image_slice
     else:
-        image_wrapper.raw_image[:, :, 0] = first_image_slice
+        raw_image[:, :, 0] = first_image_slice
 
     for file_index in range(1, num_slices):
         next_slice = read_dicom_image(file_name=stack[file_index].filename)
         if samples_per_pixel > 1:
-            image_wrapper.raw_image[:, :, file_index, :] = next_slice
+            raw_image[:, :, file_index, :] = next_slice
         else:
-            image_wrapper.raw_image[:, :, file_index] = next_slice
+            raw_image[:, :, file_index] = next_slice
         reporting.update_progress_value(round(100 * file_index / num_slices))
 
     reporting.complete_progress()
