@@ -27,6 +27,9 @@ classifiers = [
 dependencies = [
   "pydicom",
   "numpy",
+  "tqdm",
+  "natsort",
+  "dataclasses_json",
 ]
 
 [project.urls]
@@ -38,7 +41,7 @@ Source = "https://github.com/CodeChoreography/dicomity"
 source = "vcs"
 
 [project.optional-dependencies]
-test = ["pytest"]
+tests = ["pytest"]
 
 [tool.pytest.ini_options]
 pythonpath = [
