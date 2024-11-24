@@ -4,10 +4,9 @@ from os.path import join
 
 import numpy as np
 
+from dicomity.core import CoreFilename
 from dicomity.util import sort_filenames
 from pyreporting.reporting import ReportingDefault
-from core.types.CoreWrapper import CoreWrapper
-from core.types.coretypes import CoreFilename
 from dicomity.dictionary import DicomDictionary
 from dicomity.dicom import is_dicom, read_grouping_metadata, read_dicom_image
 from dicomity.group import DicomGrouper, DicomStack
@@ -29,15 +28,12 @@ def load_main_image_from_dicom_files(image_path, filenames, reporting=None):
         Tuple of: image_wrapper, representative_metadata, slice_thickness,
             global_origin_mm, sorted_positions
 
-        image_wrapper: a CoreWrapper containing the 3D volume
+        image: a np.array containing the 3D volume
         representative_metadata: metadata from one slice of the main group
         slice_thickness: the computed distance between centrepoints of each
             slice
         global_origin_mm: The mm coordinates of the image origin
         sorted_positions: Patient positions for each slice in the sorted order
-
-
-
     """
 
     if not reporting:
@@ -163,15 +159,15 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
     Args:
         stack: a DicomStack containing metadata
 
-        reporting: (Optional) A CoreReporting or other implementor of
+        reporting: (Optional) A Reporting or other implementor of
             Reporting, for error and progress reporting.
-            Create a CoreReporting with no arguments to hide all reporting. If
+            Create a Reporting with no arguments to hide all reporting. If
             no reporting object is specified then a default
             reporting object with progress dialog is
             created
 
     Returns:
-        a CoreWrapper object containing the image volume
+        a numpy array object containing the image volume
     """
 
     if not reporting:
@@ -180,14 +176,12 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
     reporting.show_progress('Reading pixel data')
     reporting.update_progress_value(0)
 
-    image_wrapper = CoreWrapper()
-
     num_slices = len(stack)
 
     # Load image slice
     first_image_slice = read_dicom_image(file_name=stack[0].filename)
     if first_image_slice is None:
-        return image_wrapper
+        return np.array([])
 
     # Pre-allocate image matrix
     size_i = stack[0].metadata.Rows
@@ -219,4 +213,4 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
         reporting.update_progress_value(round(100 * file_index / num_slices))
 
     reporting.complete_progress()
-    return image_wrapper
+    return raw_image
