@@ -1,7 +1,10 @@
 """Utility functions for dicomity"""
+import re
+from datetime import datetime
 
 import numpy as np
 from natsort import natsorted
+from appdirs import user_config_dir
 
 from dicomity.types import GroupingMetadata, PatientName
 
@@ -203,3 +206,19 @@ def sort_filenames(original_filenames):
         return natsorted(original_filenames, key=lambda cf: cf.fullFile())
     else:
         return natsorted(original_filenames)
+
+
+def remove_html(html_text):
+    """Strips out simple HTML tags from the provided string.
+    Not suitable for sanitising untrusted strings"""
+    text = re.sub('<[^<]+?>', ' ', html_text)
+    return re.sub(' +', ' ', text)
+
+
+def current_date_string():
+    return datetime.now().strftime("%d-%b-%Y").upper()
+
+
+def get_user_directory():
+    """Returns path to the user's home folder"""
+    return user_config_dir(CoreDiskUtils.APP_NAME, CoreDiskUtils.APP_AUTHOR)
