@@ -6,7 +6,7 @@ import numpy as np
 
 from dicomity.core import CoreFilename
 from dicomity.util import sort_filenames
-from pyreporting.reporting import ReportingDefault
+from pyreporting.reporting import Reporting
 from dicomity.dictionary import DicomDictionary
 from dicomity.dicom import is_dicom, read_grouping_metadata, read_dicom_image
 from dicomity.group import DicomGrouper, DicomStack
@@ -37,7 +37,7 @@ def load_main_image_from_dicom_files(image_path, filenames, reporting=None):
     """
 
     if not reporting:
-        reporting = ReportingDefault()
+        reporting = Reporting()
 
     # A single filename can be specified as a string
     if isinstance(filenames, str):
@@ -50,13 +50,14 @@ def load_main_image_from_dicom_files(image_path, filenames, reporting=None):
     # Warn the user if we found more than one group, since the others will not
     # be loaded into the image volume
     if file_grouper.number_of_groups() > 1:
-        reporting.show_warning(
-            'load_main_image_from_dicom_files:MultipleGroupings',
-            'I have removed some images from this dataset because the images '
-            'did not form a coherent set. This may be due to the presence of '
-            'scout images or dose reports, or localizer images in multiple '
-            'orientations. I have formed a volume form the largest coherent '
-            'set of images in the same orientation.')
+        Reporting.default_warning(
+            identifier='load_main_image_from_dicom_files:MultipleGroupings',
+            message='I have removed some images from this dataset because the '
+                    'images did not form a coherent set. This may be due to '
+                    'the presence of scout images or dose reports, or '
+                    'localizer images in multiple orientations. I have formed '
+                    'a volume form the largest coherent set of images in the '
+                    'same orientation.')
 
     # Choose the group with the most images
     main_group = file_grouper.largest_stack()
@@ -100,7 +101,7 @@ def load_metadata_from_dicom_files(image_path, filenames,
     """
 
     if not reporting:
-        reporting = ReportingDefault()
+        reporting = Reporting()
 
     # Show progress dialog
     reporting.show_progress('Reading image metadata')
@@ -139,9 +140,9 @@ def load_metadata_from_dicom_files(image_path, filenames,
                 metadata=read_grouping_metadata(combined_file_name))
         else:
             # If not a Dicom image, exclude it from the set and warn user
-            reporting.show_warning(
-                'load_metadata_from_dicom_files:NotADicomFile',
-                f'load_metadata_from_dicom_files: The file '
+            reporting.warning(
+                identifier='load_metadata_from_dicom_files:NotADicomFile',
+                message=f'load_metadata_from_dicom_files: The file '
                 f'{combined_file_name} is not a DICOM file and will be '
                 f'removed from this series.')
 
@@ -171,7 +172,7 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
     """
 
     if not reporting:
-        reporting = ReportingDefault()
+        reporting = Reporting()
 
     reporting.show_progress('Reading pixel data')
     reporting.update_progress_value(0)
@@ -192,9 +193,9 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
     # Pre-allocate image matrix
     data_type = first_image_slice.dtype
     if data_type == np.char:
-        reporting.show_message(
-            'load_images_from_stack:SettingDatatypeToInt8',
-            'Char datatype detected. Setting to int8')
+        reporting.info(
+            identifier='load_images_from_stack:SettingDatatypeToInt8',
+            message='Char datatype detected. Setting to int8')
         data_type = 'int8'
     image_size = [size_i, size_j, size_k, samples_per_pixel] if \
         samples_per_pixel > 1 else [size_i, size_j, size_k]

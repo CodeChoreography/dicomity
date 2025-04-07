@@ -8,7 +8,7 @@ from typing import Optional
 import math
 import numpy as np
 
-from pyreporting.reporting import ReportingDefault
+from pyreporting.reporting import Reporting
 from dicomity.util import compare_main_tags, sort
 
 from dicomity.types import GroupingMetadata
@@ -68,8 +68,8 @@ class DicomStack(UserList):
             self.sort_images_by_location(reporting)
         if len(self.data) > 1:
             if sorted_indices is None:
-                reporting.show_warning(
-                    id='DicomStack:UnableToSortFiles',
+                reporting.warning(
+                    identifier='DicomStack:UnableToSortFiles',
                     message='The images in this series may appear in the wrong '
                             'order because I was unable to determine the '
                             'correct ordering')
@@ -103,7 +103,7 @@ class DicomStack(UserList):
         """
 
         if not reporting:
-            reporting = ReportingDefault()
+            reporting = Reporting()
         reporting.show_progress('Ordering images')
         reporting.update_progress_value(0)
 
@@ -202,9 +202,9 @@ class DicomStack(UserList):
         # same position
         if slice_thicknesses and any(thickness < 0.01 for thickness in
                                      slice_thicknesses):
-            reporting.show_warning(
-                'sort_images_by_location:ZeroSliceThickness',
-                'This image contains more than one image at the same slice '
+            reporting.warning(
+                identifier='sort_images_by_location:ZeroSliceThickness',
+                message='This image contains more than one image at the same slice '
                 'position')
             slice_thicknesses = [thickness for thickness in slice_thicknesses
                                  if thickness > 0.01]
@@ -222,9 +222,9 @@ class DicomStack(UserList):
             slice_thickness = mode(slice_thicknesses)
             if any(thickness - slice_thickness > 0.01 for thickness in
                    slice_thicknesses):
-                reporting.show_warning(
-                    'sort_images_by_location:InconsistentSliceThickness',
-                    'Not all slices have the same thickness')
+                reporting.warning(
+                    identifier='sort_images_by_location:InconsistentSliceThickness',
+                    message='Not all slices have the same thickness')
 
         reporting.complete_progress()
         return sorted_indices, slice_thickness, global_origin_mm, \
