@@ -286,7 +286,9 @@ class DicomGrouper(UserList):
         for grouping in self.data:
             if grouping.matches(metadata):
                 return grouping
-        return DicomStack()
+        new_stack = DicomStack()
+        self.data.append(new_stack)
+        return new_stack
 
 
 def are_images_groupable(
