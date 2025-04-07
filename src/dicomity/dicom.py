@@ -60,17 +60,13 @@ def is_dicom(file_name: str) -> bool:
         return preamble == b"DICM"
 
 
-def is_dicom_image_file(file_path: str, file_name: str):
+def is_dicom_image_file(file_name: str) -> bool:
     """Tests if a file is a DICOM file but not a DICOMDIR file
 
     Args:
-        file_path:
-        file_name:
+        file_name: Full path to file
 
     Returns:
         True if the file is DICOM and not a DICOMDIR
     """
-    if file_name == 'DICOMDIR':
-        return False
-
-    return is_dicom(join(file_path, file_name))
+    return file_name != 'DICOMDIR' and is_dicom(file_name)
