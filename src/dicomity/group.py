@@ -53,10 +53,10 @@ class DicomStack(UserList):
         if len(self.data) < 1:
             raise ValueError("There are no images in this DicomStack")
 
-        additional_image = self.data[1] if len(self.data) > 1 else None
+        additional_image = self.data[1].metadata if len(self.data) > 1 else None
 
         return are_images_groupable(
-            self.data[0],
+            self.data[0].metadata,
             other_metadata,
             additional_image
         )
