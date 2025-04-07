@@ -4,9 +4,9 @@ from os.path import join
 
 import numpy as np
 
-from dicomity.core import CoreFilename
 from dicomity.util import sort_filenames
 from pyreporting.reporting import Reporting
+from core.types.coretypes import CoreFilename
 from dicomity.dictionary import DicomDictionary
 from dicomity.dicom import is_dicom, read_grouping_metadata, read_dicom_image
 from dicomity.group import DicomGrouper, DicomStack
@@ -25,10 +25,10 @@ def load_main_image_from_dicom_files(image_path, filenames, reporting=None):
             is created.
 
     Returns:
-        Tuple of: image_wrapper, representative_metadata, slice_thickness,
+        Tuple of: image, representative_metadata, slice_thickness,
             global_origin_mm, sorted_positions
 
-        image: a np.array containing the 3D volume
+        image: a numpy array containing the 3D volume
         representative_metadata: metadata from one slice of the main group
         slice_thickness: the computed distance between centrepoints of each
             slice
@@ -46,6 +46,9 @@ def load_main_image_from_dicom_files(image_path, filenames, reporting=None):
     # Load the metadata from the DICOM images, and group into coherent sequences
     file_grouper = load_metadata_from_dicom_files(image_path, filenames,
                                                   reporting)
+
+    if file_grouper.number_of_groups() < 1:
+        return None, None, None, None, None
 
     # Warn the user if we found more than one group, since the others will not
     # be loaded into the image volume
@@ -68,15 +71,15 @@ def load_main_image_from_dicom_files(image_path, filenames, reporting=None):
 
     # Obtain a representative set of metadata tags from the first image in the
     # sequence
-    representative_metadata = main_group.metadata[0]
+    representative_metadata = main_group[0].metadata
 
     # Load the pixel data
-    image_volume = load_images_from_stack(
+    image = load_images_from_stack(
         stack=main_group,
         reporting=reporting
     )
 
-    return image_volume, representative_metadata, slice_thickness, \
+    return image, representative_metadata, slice_thickness, \
         global_origin_mm, sorted_positions
 
 
@@ -88,8 +91,8 @@ def load_metadata_from_dicom_files(image_path, filenames,
         image_path: specify the location of the DICOM files.
         filenames: filenames can be a string for a single filename, or an
             array of strings
-        reporting: A CoreReporting or implementor of the same interface,
-            for error and progress reporting. Create a CoreReporting
+        reporting: A Reporting or implementor of the same interface,
+            for error and progress reporting. Create a Reporting
             with no arguments to hide all reporting. If no
             reporting object is specified then a default
             reporting object with progress dialog is
@@ -119,7 +122,7 @@ def load_metadata_from_dicom_files(image_path, filenames,
     sorted_filenames = sort_filenames(filenames)
     num_slices = len(filenames)
 
-    # The file grouper performs the sorting of image metadata
+    # The DicomGrouper performs the sorting of image metadata
     dicom_grouper = DicomGrouper()
 
     dictionary = DicomDictionary.essential_dictionary_without_pixel_data()
@@ -168,7 +171,7 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
             created
 
     Returns:
-        a numpy array object containing the image volume
+        a numpy array containing the image volume
     """
 
     if not reporting:
@@ -182,7 +185,7 @@ def load_images_from_stack(stack: DicomStack, reporting=None) -> np.array:
     # Load image slice
     first_image_slice = read_dicom_image(file_name=stack[0].filename)
     if first_image_slice is None:
-        return np.array([])
+        return None
 
     # Pre-allocate image matrix
     size_i = stack[0].metadata.Rows
