@@ -135,3 +135,8 @@ class PatientName:
             NamePrefix=person_name.name_prefix,
             NameSuffix=person_name.name_suffix,
         )
+
+    @property
+    def visible_name(self) -> str:
+        return ' '.join([self.NamePrefix, self.GivenName, self.MiddleName,
+                         self.FamilyName, self.NameSuffix])
