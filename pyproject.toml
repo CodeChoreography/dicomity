@@ -30,6 +30,8 @@ dependencies = [
   "natsort",
   "dataclasses_json",
   "platformdirs",
+  "enlighten",
+  "pyreporting"
 ]
 
 [project.urls]
