@@ -1,6 +1,5 @@
 """Functions for reading DICOM files ith dicomity"""
 
-from os.path import join
 from typing import Optional
 
 import numpy as np

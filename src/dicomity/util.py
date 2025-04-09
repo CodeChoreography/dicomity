@@ -3,7 +3,6 @@
 import numpy as np
 from natsort import natsorted
 
-from core.types.coretypes import CoreFilename
 from dicomity.types import GroupingMetadata, PatientName
 
 
@@ -198,9 +197,6 @@ def sort(array):
     return sorted_values, sorted_indices
 
 
-def sort_filenames(original_filenames):
+def sort_filenames(original_filenames: list[str]):
     """Sorts a list of filenames, taking into account numbers"""
-    if len(original_filenames) > 0 and isinstance(original_filenames[0], CoreFilename):
-        return natsorted(original_filenames, key=lambda cf: cf.fullFile())
-    else:
-        return natsorted(original_filenames)
+    return natsorted(original_filenames)

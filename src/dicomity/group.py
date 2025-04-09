@@ -8,7 +8,7 @@ from typing import Optional
 import math
 import numpy as np
 
-from pyreporting.reporting import Reporting
+from pyreporting.reporting import get_reporting
 from dicomity.util import compare_main_tags, sort
 
 from dicomity.types import GroupingMetadata
@@ -61,14 +61,14 @@ class DicomStack(UserList):
             additional_image
         )
 
-    def sort_and_get_parameters(self, reporting):
+    def sort_and_get_parameters(self):
         """Sorts the images according to slice location, and computes values for
         slice thickness and global origin"""
         sorted_indices, slice_thickness, global_origin_mm, sorted_positions = \
-            self.sort_images_by_location(reporting)
+            self.sort_images_by_location()
         if len(self.data) > 1:
             if sorted_indices is None:
-                reporting.warning(
+                get_reporting().warning(
                     identifier='DicomStack:UnableToSortFiles',
                     message='The images in this series may appear in the wrong '
                             'order because I was unable to determine the '
@@ -77,13 +77,9 @@ class DicomStack(UserList):
                 self.data = [self.data[i] for i in sorted_indices]
         return slice_thickness, global_origin_mm, sorted_positions
 
-    def sort_images_by_location(self, reporting=None):
+    def sort_images_by_location(self):
         """Sort a series of Dicom images by their slice locations and calculate
         additional image parameters
-
-        Args:
-            reporting: - A CoreReporting or implementor of the same interface,
-                for error and progress reporting.
 
         Returns:
             Tuple of:
@@ -102,8 +98,7 @@ class DicomStack(UserList):
 
         """
 
-        if not reporting:
-            reporting = Reporting()
+        reporting = get_reporting()
         reporting.show_progress('Ordering images')
         reporting.update_progress_value(0)
 
