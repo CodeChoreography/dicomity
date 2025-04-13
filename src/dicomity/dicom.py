@@ -19,12 +19,14 @@ def read_dicom_tags(
         dictionary: Optional[DicomDictionary] = None,
         specific_tags: Optional[list[str]] = None
 ) -> FileDataset:
-    if dictionary:
-        specific_tags = dictionary.allTags()
+    # ToDo: reading of specific tags is not currently supported
+    # if dictionary:
+    #     specific_tags = dictionary.allTags()
+
     meta = filereader.dcmread(
         file_name,
-        stop_before_pixels=True,
-        specific_tags=specific_tags
+        stop_before_pixels=True
+    #     specific_tags=specific_tags
     )
     return meta
 
@@ -34,6 +36,34 @@ def read_grouping_metadata(file_name: str) -> GroupingMetadata:
                               stop_before_pixels=True,
                               specific_tags=GroupingMetadata.groupingTags())
     return GroupingMetadata.fromPyDicom(meta)
+
+
+def dicomInfo(file_name):
+    """Reads the metaheader data from a Dicom file"""
+    return filereader.dcmread(file_name, stop_before_pixels=True)
+
+
+def DMdicominfo(file_name, dictionary=None):
+    """Read metadata from a Dicom file
+
+    Usage:
+        metadata = DMdicominfo(fileName)
+
+        fileName: path and filename of the file to test
+
+     Returns:
+        a structure containing the metadata from a Dicom file
+    """
+
+    if not dictionary:
+        dictionary = DicomDictionary.essential_dictionary_without_pixel_data()
+
+    metadata = read_dicom_tags(file_name, dictionary)
+
+    # The filename is not really part of the metadata but is included for
+    # compatibility with Matlab's image processing toolbox
+    # metadata["Filename"] = file_name
+    return metadata
 
 
 def is_dicom(file_name: str) -> bool:
