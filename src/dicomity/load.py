@@ -87,8 +87,7 @@ def load_metadata_from_dicom_files(filenames: str or list[str]) -> DicomGrouper:
     reporting = get_reporting()
 
     # Show progress dialog
-    reporting.show_progress('Reading image metadata')
-    reporting.update_progress_value(0)
+    reporting.start_progress(label='Reading image metadata', value=)
 
     # A single filename can be specified as a string
     if isinstance(filenames, str):
@@ -122,7 +121,7 @@ def load_metadata_from_dicom_files(filenames: str or list[str]) -> DicomGrouper:
                 f'{combined_file_name} is not a DICOM file and will be '
                 f'removed from this series.')
 
-        reporting.update_progress_value(round(100 * file_index / num_slices))
+        reporting.update_progress(value=round(100 * file_index / num_slices))
 
         file_index += 1
 
@@ -143,8 +142,7 @@ def load_images_from_stack(stack: DicomStack) -> np.array:
     # Get the default pyreporting object
     reporting = get_reporting()
 
-    reporting.show_progress('Reading pixel data')
-    reporting.update_progress_value(0)
+    reporting.start_progress(label='Reading pixel data', value=0)
 
     num_slices = len(stack)
 
@@ -180,7 +178,7 @@ def load_images_from_stack(stack: DicomStack) -> np.array:
             raw_image[:, :, file_index, :] = next_slice
         else:
             raw_image[:, :, file_index] = next_slice
-        reporting.update_progress_value(round(100 * file_index / num_slices))
+        reporting.update_progress(value=round(100 * file_index / num_slices))
 
     reporting.complete_progress()
     return raw_image

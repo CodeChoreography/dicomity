@@ -99,8 +99,7 @@ class DicomStack(UserList):
         """
 
         reporting = get_reporting()
-        reporting.show_progress('Ordering images')
-        reporting.update_progress_value(0)
+        reporting.start_progress(label='Ordering images', value=0)
 
         # Determine if ImagePositionPatient and SliceLocation tags exist.
         # It is sufficient to only check the metadata for one image, assuming

@@ -7,7 +7,7 @@ name = "dicomity"
 dynamic = ["version"]
 description = 'Utility for grouping DICOM files'
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = "MIT"
 keywords = []
 authors = [
@@ -24,7 +24,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "pydicom",
+  "pydicom>=0.0.5",
   "numpy",
   "tqdm",
   "natsort",
