@@ -262,7 +262,7 @@ class DicomGrouper(UserList):
         if len(self.data) < 1:
             return None
 
-        return max(self.data, key=lambda g: len(g))
+        return max(self.data, key=len)
 
     def find_stack(self, metadata: GroupingMetadata) -> DicomStack:
         """Find a stack to which the specified image metadata can be added

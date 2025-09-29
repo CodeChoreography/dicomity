@@ -1,11 +1,9 @@
 """Functions for loading an image volume from DICOM files"""
 
-from os.path import join
-
 import numpy as np
 
-from dicomity.util import sort_filenames
 from pyreporting.reporting import get_reporting
+from dicomity.util import sort_filenames
 from dicomity.dictionary import DicomDictionary
 from dicomity.dicom import is_dicom, read_grouping_metadata, read_dicom_image
 from dicomity.group import DicomGrouper, DicomStack
@@ -87,7 +85,7 @@ def load_metadata_from_dicom_files(filenames: str or list[str]) -> DicomGrouper:
     reporting = get_reporting()
 
     # Show progress dialog
-    reporting.start_progress(label='Reading image metadata', value=)
+    reporting.start_progress(label='Reading image metadata', value=0)
 
     # A single filename can be specified as a string
     if isinstance(filenames, str):

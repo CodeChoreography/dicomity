@@ -33,7 +33,7 @@ class GroupingMetadata:
     Manufacturer: Optional[str] = None
     StudyDescription: Optional[str] = None
     SeriesDescription: Optional[str] = None
-    PatientName: Optional[PatientName] = None
+    PatientName: Optional['PatientName'] = None
     PatientID: Optional[str] = None
     PatientBirthDate: Optional[str] = None
     ReceiveCoilName: Optional[str] = None
@@ -107,6 +107,7 @@ class GroupingMetadata:
 
 
 class TagDefinition:
+    # pylint: disable=invalid-name
     """Used in creating a DicomDictionary"""
 
     def __init__(self, tag_string, vr_type, name):
@@ -120,6 +121,7 @@ class TagDefinition:
 @dataclass_json
 @dataclass
 class PatientName:
+    # pylint: disable=invalid-name
     FamilyName: str = ''
     GivenName: str = ''
     MiddleName: str = ''

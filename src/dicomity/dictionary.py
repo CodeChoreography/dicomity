@@ -41,7 +41,7 @@ class DicomDictionary:
         # choose to ignore it
         tags.append(DicomDictionary._item_delimiter_tag())
 
-        self.Dictionary = tags
+        self.dictionary = tags
         self._make_tag_list()
         self._make_tag_map()
 
@@ -77,11 +77,11 @@ class DicomDictionary:
         return cls.complete_dictionary_singleton
 
     def _make_tag_list(self):
-        self.tag_list = [d.TagIndex for d in self.Dictionary]
+        self.tag_list = [d.TagIndex for d in self.dictionary]
 
     def _make_tag_map(self):
         self.tag_map = {}
-        for t in self.Dictionary:
+        for t in self.dictionary:
             self.tag_map[t.TagIndex] = t
 
     @staticmethod
